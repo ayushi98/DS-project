@@ -21,10 +21,12 @@ library(gplots)        # for col2hex() function
 library(RColorBrewer)  # for color palettes
 library(sf)            # for working with spatial data
 library(leaflet)       # for highly customizable
+library(gganimate)
 theme_set(theme_minimal())
 ```
 
-```{r}
+<<<<<<< HEAD
+=======
 
-```
+#just checking 
 
