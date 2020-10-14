@@ -1,0 +1,42 @@
+---
+title: "India Exploratory Graphs"
+author: "Kashvi Ajitsaria"
+date: "10/14/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r}
+library(tidyverse)
+library(lubridate)     
+library(ggthemes)      
+library(geofacet)     
+library(maps)          # for map data
+library(ggmap)         # for mapping points on maps
+library(gplots)        # for col2hex() function
+library(RColorBrewer)  # for color palettes
+library(sf)            # for working with spatial data
+library(leaflet)       # for highly customizable
+library(gganimate)
+theme_set(theme_minimal())
+```
+
+
+
+```{r}
+india_coordinates <- readr::read_csv('https://raw.githubusercontent.com/ayushi98/DS-project/main/Indian%20Cities%20Database.csv') #For Indian Cities' Latitude and Longitude
+india_pollution <- readr::read_csv('https://raw.githubusercontent.com/ayushi98/DS-project/main/city_day.csv') #For Indian Cities' Pollution Levels
+```
+
+
+
+```{r}
+india_city_pollution %>% 
+  filter(City == "Ahmedabad") %>% 
+  ggplot(aes(x = Date, y = AQI)) +
+  geom_line()
+```
