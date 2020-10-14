@@ -24,3 +24,10 @@ library(leaflet)       # for highly customizabl
 theme_set(theme_minimal())
 ```
 
+
+#just checking 
+
+```{r}
+
+```
+
