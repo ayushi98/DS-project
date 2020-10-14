@@ -35,8 +35,18 @@ india_coordinates <- readr::read_csv('https://raw.githubusercontent.com/ayushi98
 india_pollution <- readr::read_csv('https://raw.githubusercontent.com/ayushi98/DS-project/main/city_day.csv') #For Indian Cities' Pollution Levels
 ```
 ```{r}
-india_pollution %>% 
- left_join(india_coordinates,
+india_city_pollution <-
+  india_pollution %>% 
+  left_join(india_coordinates,
             by = c("City"))
+```
+
+Now I'm doing some exploratory graphs with this data.
+
+```{r}
+india_city_pollution %>% 
+  filter(City == "Ahmedabad") %>% 
+  ggplot(aes(x = Date, y = AQI)) +
+  geom_line()
 ```
 
