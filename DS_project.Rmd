@@ -9,7 +9,6 @@ output: html_document
 #knitr::opts_chunk$set(echo = TRUE)
 ```
 
-
 ```{r}
 library(tidyverse)
 library(lubridate)     
@@ -23,6 +22,7 @@ library(RColorBrewer)  # for color palettes
 library(sf)            # for working with spatial data
 library(leaflet)       # for highly customizable
 library(gganimate)
+library(googlesheets4)
 theme_set(theme_minimal())
 ```
 
@@ -67,4 +67,112 @@ aqi_2020<-
             by = c(`county Name` = "COUNTY"))
 ```
 
+```{r}
+library(tidyverse)
+library(lubridate)     
+library(ggthemes)      
+library(readr)
+library(geofacet)     
+library(maps)          # for map data
+library(ggmap)         # for mapping points on maps
+library(gplots)        # for col2hex() function
+library(RColorBrewer)  # for color palettes
+library(sf)            # for working with spatial data
+library(leaflet)       # for highly customizable
+library(gganimate)
+gs4_deauth()
+theme_set(theme_minimal())
+```
+
+```{r}
+india_coordinates <- readr::read_csv('https://raw.githubusercontent.com/ayushi98/DS-project/main/Indian%20Cities%20Database.csv') #For Indian Cities' Latitude and Longitude
+india_pollution <- readr::read_csv('https://raw.githubusercontent.com/ayushi98/DS-project/main/city_day.csv') #For Indian Cities' Pollution Levels
+```
+
+```{r}
+india_city_pollution <-
+  india_pollution %>% 
+  left_join(india_coordinates,
+            by = c("City")) 
+print(india_city_pollution)
+```
+
+
+
+```{r}
+india_city_pollution %>% 
+  filter(City == "Ahmedabad") %>% 
+  ggplot(aes(x = Date, y = AQI)) +
+  geom_line()
+```
+
+
+```{r}
+# daily_aqi_by_county_2000 <- read_csv("https://raw.githubusercontent.com/ayushi98/DS-project/main/daily_aqi_by_county_2000.csv")
+# daily_aqi_by_county_2020 <- read_csv("https://raw.githubusercontent.com/ayushi98/DS-project/main/daily_aqi_by_county_2020.csv")
+# us_cities_coords <- read_csv("https://raw.githubusercontent.com/kelvins/US-Cities-Database/main/csv/us_cities.csv")
+```
+
+```{r}
+# aqi_2000<-
+#   daily_aqi_by_county_2000 %>% 
+#   left_join(us_cities_coords,
+#             by = c(`county Name` = "COUNTY")) 
+# 
+# aqi_2020<-
+#   daily_aqi_by_county_2020 %>% 
+#   left_join(us_cities_coords,
+#             by = c(`county Name` = "COUNTY"))
+```
+
+Preliminary data cleanup
+```{r}
+read.csv("https://raw.githubusercontent.com/ayushi98/DS-project/main/daily_aqi_by_county_2000.csv") -> AQI_2000
+
+AQI_2000 %>%
+  group_by(`State Name`) %>%
+  summarise(mean(AQI)) -> mean_AQI_2000
+
+write.csv(mean_AQI_2000, "mean_AQI_2000.csv")
+
+read.csv("https://raw.githubusercontent.com/ayushi98/DS-project/main/daily_aqi_by_county_2020.csv") -> AQI_2020
+
+AQI_2020 %>%
+  group_by(`State Name`) %>%
+  summarise(mean(AQI)) -> mean_AQI_2020
+
+write.csv(mean_AQI_2020, "mean_AQI_2020.csv")
+```
+```{r}
+mean_AQI_2000 <- read_csv("mean_AQI_2000.csv", 
+    col_types = cols(X1 = col_skip())) %>%
+    rename(mean_2000 = `mean(AQI)`)
+
+mean_AQI_2020 <- read_csv("mean_AQI_2020.csv", 
+    col_types = cols(X1 = col_skip())) %>%
+    rename(mean_2020 = `mean(AQI)`)
+
+mean_AQI_2020 %>%
+  left_join(mean_AQI_2000,
+            by = "State Name") %>%
+  mutate(dif = mean_2020 - mean_2000,
+         `State Name` = str_to_lower(`State Name`)) -> AQI_dif
+
+AQI_dif
+```
+
+```{r}
+states_map <- map_data("state")
+states_map
+AQI_dif %>%
+  ggplot() +
+  geom_map(map = states_map,
+           aes(map_id = `State Name`,
+               fill = dif)) +
+  expand_limits(x = states_map$long, y = states_map$lat) +
+  theme_map() +
+  theme(legend.position = "right",
+        plot.background = element_rect(fill = "#b6d4c8")) +
+  labs(title = "20 Year Difference", fill = "Difference")
+```
 
