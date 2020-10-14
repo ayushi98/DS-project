@@ -14,6 +14,7 @@ output: html_document
 library(tidyverse)
 library(lubridate)     
 library(ggthemes)      
+library(readr)
 library(geofacet)     
 library(maps)          # for map data
 library(ggmap)         # for mapping points on maps
@@ -25,7 +26,24 @@ library(gganimate)
 theme_set(theme_minimal())
 ```
 
-<<<<<<< HEAD
-=======
+```{r}
+india_coordinates <- readr::read_csv('https://raw.githubusercontent.com/ayushi98/DS-project/main/Indian%20Cities%20Database.csv') #For Indian Cities' Latitude and Longitude
+india_pollution <- readr::read_csv('https://raw.githubusercontent.com/ayushi98/DS-project/main/city_day.csv') #For Indian Cities' Pollution Levels
+```
 
-#just checking 
+```{r}
+india_city_pollution <-
+  india_pollution %>% 
+  left_join(india_coordinates,
+            by = c("City")) 
+print(india_city_pollution)
+```
+
+
+
+```{r}
+india_city_pollution %>% 
+  filter(City == "Ahmedabad") %>% 
+  ggplot(aes(x = Date, y = AQI)) +
+  geom_line()
+```
