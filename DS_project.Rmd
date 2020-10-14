@@ -66,6 +66,5 @@ aqi_2020<-
   left_join(us_cities_coords,
             by = c(`county Name` = "COUNTY"))
 ```
-```
 
 
