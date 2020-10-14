@@ -6,8 +6,7 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-#bveirubvoe
+#knitr::opts_chunk$set(echo = TRUE)
 ```
 
 
@@ -24,6 +23,7 @@ library(sf)            # for working with spatial data
 library(leaflet)       # for highly customizable
 library(gganimate)
 theme_set(theme_minimal())
+#trying to commit
 ```
 
 
@@ -31,6 +31,14 @@ theme_set(theme_minimal())
 ```{r}
 india_coordinates <- readr::read_csv('https://raw.githubusercontent.com/ayushi98/DS-project/main/Indian%20Cities%20Database.csv') #For Indian Cities' Latitude and Longitude
 india_pollution <- readr::read_csv('https://raw.githubusercontent.com/ayushi98/DS-project/main/city_day.csv') #For Indian Cities' Pollution Levels
+```
+
+```{r}
+india_city_pollution <-
+  india_pollution %>% 
+  left_join(india_coordinates,
+            by = c("City")) 
+print(india_city_pollution)
 ```
 
 
