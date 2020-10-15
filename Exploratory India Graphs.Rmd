@@ -99,16 +99,12 @@ geom_point(data = india_city_pollution,
 ```
 ```{r}
 india_city_pollution %>%
+  filter(Pollutant == "AQI") %>% 
   group_by(City, Pollutant) %>% 
   arrange(desc(degree_pollution)) %>% 
   head(10)
 ```
 
-```{r}
-india_city_pollution %>%
-  
-  
-```
 
 
 
