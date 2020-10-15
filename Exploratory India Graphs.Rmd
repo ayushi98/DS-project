@@ -22,8 +22,8 @@ library(RColorBrewer)  # for color palettes
 library(sf)            # for working with spatial data
 library(leaflet)       # for highly customizable
 library(gganimate)
+library(openintro)
 theme_set(theme_minimal())
-#trying to commit
 ```
 
 
@@ -37,7 +37,11 @@ india_pollution <- readr::read_csv('https://raw.githubusercontent.com/ayushi98/D
 india_city_pollution <-
   india_pollution %>% 
   left_join(india_coordinates,
-            by = c("City")) 
+            by = c("City")) %>% 
+  pivot_longer(cols = c("PM2.5", "PM10", "NO2", "CO", "SO2", "O3","AQI"),
+               names_to = "Pollutant",
+               values_to = "degree_pollution")
+
 print(india_city_pollution)
 ```
 
@@ -49,3 +53,30 @@ india_city_pollution %>%
   ggplot(aes(x = Date, y = AQI)) +
   geom_line()
 ```
+
+
+
+```{r}
+india <- get_stamenmap(
+    bbox = c(left = 61.188, bottom = 8.026, right = 106.542, top = 36.502), 
+    maptype = "terrain",
+    zoom = 5)
+
+ggmap(india)+
+geom_point(data = india_city_pollution %>% filter(Date == c("2015-05-31", "2016-05-31", "2017-05-31", "2018-05-31","2019-05-31", "2020-05-31")), 
+           aes(x = Long, y = Lat, color = Pollutant, size = degree_pollution))+
+  facet_wrap(~Date)+
+  theme(legend.background = element_blank())+
+  theme_map()
+```
+
+
+```{r}
+ggmap(india)+
+geom_point(data = india_city_pollution %>% filter(Date == c("2015-05-31", "2016-05-31", "2017-05-31", "2018-05-31","2019-05-31", "2020-05-31")), 
+           aes(x = Long, y = Lat, color = SO2))+
+  facet_wrap(~Date)+
+  theme(legend.background = element_blank())+
+  theme_map()
+```
+
