@@ -38,13 +38,12 @@ india_city_pollution <-
   india_pollution %>% 
   left_join(india_coordinates,
             by = c("City")) %>% 
-  pivot_longer(cols = c("PM2.5", "PM10", "NO2", "CO", "SO2", "O3","AQI"),
+  pivot_longer(cols = c("PM2.5", "NO2", "CO", "SO2", "O3","AQI"),
                names_to = "Pollutant",
                values_to = "degree_pollution")
 
 print(india_city_pollution)
 ```
-
 
 
 ```{r}
@@ -54,6 +53,26 @@ india_city_pollution %>%
   geom_line()
 ```
 
+```{r}
+total_india<- 
+  india_city_pollution %>% 
+  mutate(weekday = wday(Date, label=TRUE)) %>% 
+  filter(weekday == "Fri") %>% 
+  ggplot(aes(x = Date, y = degree_pollution), position = position_stack())+
+  geom_area(aes(fill = Pollutant))+
+  labs(title = "Air Pollution in India over time ",
+       subtitle = "Date:{closest_state}",
+       x = "Date",
+       y = "Degree of Pollution")+
+  scale_fill_viridis_d(option = "magma")+
+  transition_states(Date)
+
+anim_save("total_india.gif", total_india)
+```
+
+```{r}
+knitr::include_graphics("total_india.gif")
+```
 
 
 ```{r}
@@ -70,13 +89,26 @@ geom_point(data = india_city_pollution %>% filter(Date == c("2015-05-31", "2016-
   theme_map()
 ```
 
-
 ```{r}
 ggmap(india)+
-geom_point(data = india_city_pollution %>% filter(Date == c("2015-05-31", "2016-05-31", "2017-05-31", "2018-05-31","2019-05-31", "2020-05-31")), 
-           aes(x = Long, y = Lat, color = SO2))+
-  facet_wrap(~Date)+
+geom_point(data = india_city_pollution, 
+           aes(x = Long, y = Lat, color = degree_pollution))+
+  facet_wrap(~Pollutant)+
   theme(legend.background = element_blank())+
   theme_map()
 ```
+```{r}
+india_city_pollution %>%
+  group_by(City, Pollutant) %>% 
+  arrange(desc(degree_pollution)) %>% 
+  head(10)
+```
+
+```{r}
+india_city_pollution %>%
+  
+  
+```
+
+
 
