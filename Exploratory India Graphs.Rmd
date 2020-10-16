@@ -48,8 +48,9 @@ print(india_city_pollution)
 
 ```{r}
 india_city_pollution %>% 
-  filter(City == "Ahmedabad") %>% 
-  ggplot(aes(x = Date, y = AQI)) +
+  filter(City == "Ahmedabad",
+         Pollutant == "AQI") %>% 
+  ggplot(aes(x = Date, y = degree_pollution)) +
   geom_line()
 ```
 
@@ -64,7 +65,7 @@ total_india<-
        subtitle = "Date:{closest_state}",
        x = "Date",
        y = "Degree of Pollution")+
-  scale_fill_viridis_d(option = "magma")+
+  scale_fill_viridis_d()+
   transition_states(Date)
 
 anim_save("total_india.gif", total_india)
